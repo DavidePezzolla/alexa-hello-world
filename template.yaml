@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Connected Vehicle Alexa Skill
+
+Parameters:
+  EventSourceToken:
+    Type: String    
+    Description: The token retrieved from Alexa developer console
+
+
+Resources:
+  SkillFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: skill/
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Timeout: 30      
+
+  AlexaVoiceServicePermission:
+    Properties:
+      Action: lambda:invokeFunction
+      EventSourceToken: !Ref EventSourceToken
+      FunctionName:
+        Ref: SkillFunction
+      Principal: alexa-appkit.amazon.com
+    Type: AWS::Lambda::Permission
+
